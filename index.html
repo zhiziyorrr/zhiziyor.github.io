@@ -1,11 +1,445 @@
-<!doctype html>
-<html>
-  <head>
-    <title>我的名片</title>
-    <meta charset="utf-8" />
-  </head>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>zhiziyor · 清新名片</title>
+    <!-- 使用优雅的 Google Fonts，提升文字质感 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 (免费图标库，增添清新小元素) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <body>
-    <h1>你好 我是 你的名字</h1>
-  </body>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            background: linear-gradient(145deg, #eef5f0 0%, #d9e6e0 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        /* 清新风格的背景纹理 — 细微的圆点/网格，增加呼吸感 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(#bdd9cc 0.8px, transparent 0.8px);
+            background-size: 28px 28px;
+            opacity: 0.35;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 主卡片容器 — 磨砂玻璃效果 + 柔和阴影 */
+        .card {
+            position: relative;
+            z-index: 2;
+            max-width: 720px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            border-radius: 3rem;
+            padding: 2rem 2rem 2.5rem 2rem;
+            box-shadow: 0 20px 40px -12px rgba(0, 30, 20, 0.15), 
+                        0 4px 18px rgba(0, 0, 0, 0.02),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 550px) {
+            .card {
+                padding: 1.75rem 1.5rem 2rem;
+                border-radius: 2rem;
+            }
+        }
+
+        /* 头像与装饰区 */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.8rem;
+        }
+
+        .avatar {
+            background: linear-gradient(135deg, #5f9d80, #3d6b55);
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 18px rgba(60, 90, 70, 0.2);
+            transition: transform 0.2s ease;
+        }
+
+        .avatar i {
+            font-size: 3rem;
+            color: white;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        .avatar:hover {
+            transform: scale(1.02);
+        }
+
+        .title-section h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            background: linear-gradient(120deg, #1f3e34, #2b5a48);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.25rem;
+        }
+
+        .title-section .tagline {
+            font-size: 1rem;
+            font-weight: 400;
+            color: #4b6a5c;
+            background: rgba(95, 157, 128, 0.12);
+            display: inline-block;
+            padding: 0.2rem 0.9rem;
+            border-radius: 40px;
+            backdrop-filter: blur(2px);
+            letter-spacing: 0.3px;
+        }
+
+        /* 分隔装饰 */
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, #c3dfd0, #ffffff, #c3dfd0);
+            margin: 1.5rem 0 1.8rem 0;
+            width: 100%;
+            border-radius: 2px;
+        }
+
+        /* 介绍文本区块 — 清新留白 */
+        .bio {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 2rem;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,240,0.7);
+            transition: all 0.2s;
+        }
+
+        .bio p {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #2c4238;
+            font-weight: 400;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+        }
+
+        .bio i {
+            font-size: 1.25rem;
+            color: #5f9d80;
+            margin-top: 0.15rem;
+        }
+
+        /* 信息网格 — 联系方式和兴趣 */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-item {
+            background: rgba(250, 255, 250, 0.7);
+            backdrop-filter: blur(2px);
+            border-radius: 1.8rem;
+            padding: 0.9rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.2s;
+            border: 1px solid rgba(100, 140, 110, 0.15);
+        }
+
+        .info-item:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateY(-2px);
+            border-color: rgba(95, 157, 128, 0.4);
+            box-shadow: 0 6px 14px rgba(50, 80, 60, 0.08);
+        }
+
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            background: #eef3ef;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3f7a62;
+            font-size: 1.3rem;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 500;
+            color: #7b9b8c;
+        }
+
+        .info-value {
+            font-weight: 500;
+            color: #1c362d;
+            font-size: 0.95rem;
+            word-break: break-word;
+        }
+
+        /* 社交链接区 清新圆润 */
+        .social-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .social-btn {
+            background: rgba(245, 255, 245, 0.7);
+            backdrop-filter: blur(4px);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.65rem 1.2rem;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #2b5a48;
+            text-decoration: none;
+            transition: all 0.25s;
+            border: 1px solid rgba(80, 120, 90, 0.2);
+        }
+
+        .social-btn i {
+            font-size: 1.1rem;
+            color: #3d7b62;
+        }
+
+        .social-btn:hover {
+            background: white;
+            border-color: #5f9d80;
+            color: #1e4d3c;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 18px rgba(70, 110, 90, 0.12);
+        }
+
+        /* 脚注小字 — 清新留白 */
+        .footer-note {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.7rem;
+            color: #8aa79a;
+            letter-spacing: 0.3px;
+            border-top: 1px solid rgba(150, 180, 160, 0.3);
+            padding-top: 1.2rem;
+        }
+
+        /* 响应式优化 */
+        @media (max-width: 480px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 0.9rem;
+            }
+            .social-btn span:not(i) {
+                display: inline;
+            }
+            .title-section h1 {
+                font-size: 1.8rem;
+            }
+            .avatar {
+                width: 70px;
+                height: 70px;
+            }
+            .avatar i {
+                font-size: 2.4rem;
+            }
+        }
+
+        /* 点缀小叶子 (极简清新装饰) */
+        .leaf-bg {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 80px;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+            transform: rotate(15deg);
+        }
+
+        .leaf-bg-left {
+            position: fixed;
+            top: 30px;
+            left: 10px;
+            font-size: 70px;
+            opacity: 0.1;
+            pointer-events: none;
+            transform: rotate(-20deg);
+        }
+    </style>
+</head>
+<body>
+    <!-- 轻柔背景自然元素，不干扰阅读 -->
+    <div class="leaf-bg">🌿</div>
+    <div class="leaf-bg-left">🍃</div>
+
+    <div class="card">
+        <div class="profile-header">
+            <div class="avatar">
+                <!-- 清新风格叶子头像图标，代表自然与亲和 -->
+                <i class="fas fa-seedling"></i>
+            </div>
+            <div class="title-section">
+                <h1>zhiziyor</h1>
+                <div class="tagline">
+                    <i class="fas fa-feather-alt" style="font-size: 0.75rem; margin-right: 6px;"></i> 静谧 · 创造 · 极简
+                </div>
+            </div>
+        </div>
+
+        <!-- 简介区：增加个人格言/清新自我介绍 -->
+        <div class="bio">
+            <p>
+                <i class="fas fa-cloud-sun"></i>
+                <span>保持好奇，与代码和设计共生。喜欢干净简洁的界面，热爱自然与生活细节。<br>专注于 Web 创作 · 自由设计师 & 开发者。</span>
+            </p>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- 信息网格：联络与喜好，更加生活化 -->
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-icon"><i class="far fa-envelope"></i></div>
+                <div class="info-content">
+                    <div class="info-label">电子邮箱</div>
+                    <div class="info-value">zhiziyor@hey.com</div>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                <div class="info-content">
+                    <div class="info-label">现居地</div>
+                    <div class="info-value">杭州 · 西湖之畔</div>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon"><i class="fas fa-camera"></i></div>
+                <div class="info-content">
+                    <div class="info-label">日常灵感</div>
+                    <div class="info-value">摄影 · 植物 · 开源</div>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon"><i class="fas fa-mug-hot"></i></div>
+                <div class="info-content">
+                    <div class="info-label">此刻状态</div>
+                    <div class="info-value">探索交互艺术 · 远程创作</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 社交媒体入口，用图标+清新按钮 -->
+        <div class="social-links">
+            <a href="#" class="social-btn" aria-label="GitHub">
+                <i class="fab fa-github"></i> <span>github/zhiziyor</span>
+            </a>
+            <a href="#" class="social-btn" aria-label="Dribbble">
+                <i class="fab fa-dribbble"></i> <span>dribbble/zhiziyor</span>
+            </a>
+            <a href="#" class="social-btn" aria-label="小红书">
+                <i class="fab fa-weixin"></i> <span>小森林记事</span>
+            </a>
+            <a href="#" class="social-btn" aria-label="Twitter">
+                <i class="fab fa-twitter"></i> <span>@zhiziyor</span>
+            </a>
+        </div>
+
+        <div class="footer-note">
+            🌱 保持呼吸感 | 每一次相遇都是风景
+        </div>
+    </div>
+
+    <!-- 添加简单的微交互：控制台输出友好提示，以及轻微卡片加载动画，纯美观 -->
+    <script>
+        (function() {
+            // 简单加载完成问候，提升清爽感
+            console.log("✨ 清新名片已加载 — zhiziyor 欢迎你 ✨");
+            // 让卡片有淡入效果 (原本已经可见，但增加简单动效)
+            const card = document.querySelector('.card');
+            if(card) {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(12px)';
+                card.style.transition = 'opacity 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1), transform 0.5s ease';
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 80);
+            }
+            // 增加社交链接点击提醒小彩蛋（优雅，非强制，只在控制台提示）
+            const socialBtns = document.querySelectorAll('.social-btn');
+            socialBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    // 仅仅展示一个小清新toast提示？为了保持安静，也可以不加alert
+                    // 但为了用户友好，展示一个微妙的控制台信息和轻提醒
+                    const platform = btn.innerText.trim().split('/')[0] || '社交平台';
+                    console.log(`🌸 点击了 ${platform} — 实际可替换为真实链接，这是名片演示 ~`);
+                    // 可选最简单轻提醒（无干扰感）
+                    const msg = document.createElement('div');
+                    msg.innerText = `✨ 即将前往 ${platform} 个人主页 ✨`;
+                    msg.style.position = 'fixed';
+                    msg.style.bottom = '25px';
+                    msg.style.left = '50%';
+                    msg.style.transform = 'translateX(-50%)';
+                    msg.style.backgroundColor = 'rgba(55, 85, 70, 0.85)';
+                    msg.style.backdropFilter = 'blur(12px)';
+                    msg.style.color = '#F1F9F2';
+                    msg.style.padding = '0.5rem 1.2rem';
+                    msg.style.borderRadius = '60px';
+                    msg.style.fontSize = '0.8rem';
+                    msg.style.fontWeight = '500';
+                    msg.style.fontFamily = 'Inter, sans-serif';
+                    msg.style.zIndex = '999';
+                    msg.style.pointerEvents = 'none';
+                    msg.style.opacity = '0';
+                    msg.style.transition = 'opacity 0.2s';
+                    document.body.appendChild(msg);
+                    setTimeout(() => { msg.style.opacity = '1'; }, 10);
+                    setTimeout(() => {
+                        msg.style.opacity = '0';
+                        setTimeout(() => msg.remove(), 300);
+                    }, 1800);
+                });
+            });
+        })();
+    </script>
+</body>
 </html>
